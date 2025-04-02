@@ -1,0 +1,17 @@
+{
+	"name": "fluxie-bot-app",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"deploy": "wrangler deploy",
+		"dev": "wrangler dev",
+		"webhook": "node src/webhook.js",
+		"database": ""
+	},
+	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "^0.7.5",
+		"vitest": "~3.0.7",
+		"wrangler": "^4.6.0"
+	}
+}
