@@ -1,8 +1,9 @@
+import { sendHelpMessage, sendIdMessage, sendSettingMessage, sendStartMessage } from "./tech";
+import { sendMessage, answerCallbackQuery } from "./utils";
+
 export default {
 	async fetch(request, env) {
-		if (!env.BOT_TOKEN) {
-			return new Response('Missing BOT_TOKEN', { status: 500 });
-		}
+		if (request.method !== 'POST') return new Response('Method Not Allowed', { status: 405 });
 
 		const data = await request.json();
 		if (data.message) {
@@ -20,9 +21,13 @@ async function processMessage(message, env) {
 	const text = message.text;
 
 	if (text === '/start') {
-		return await sendStartMessage(chatId, env);
+		return await sendStartMessage(chatId, message, env);
 	} else if (text === '/help') {
 		return await sendHelpMessage(chatId, env);
+	} else if (text === '/settings') {
+		return await sendSettingMessage(chatId, env);
+	} else if (text === '/id') {
+		return await sendIdMessage(message, env);
 	}
 
 	return sendMessage(chatId, 'Я не розумію цю команду.', env);
@@ -39,47 +44,4 @@ async function processQuery(query, env) {
 	}
 
 	return sendMessage(chatId, 'Невідома дія.', env);
-}
-
-async function answerCallbackQuery(callbackId, env) {
-	const body = {
-		callback_query_id: callbackId,
-		show_alert: false
-	};
-
-	return fetch(`https://api.telegram.org/bot${env.BOT_TOKEN}/answerCallbackQuery`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(body)
-	}).catch(error => console.error('Error answering callback query:', error));
-}
-
-async function sendStartMessage(chatId, env) {
-	const keyboard = {
-		inline_keyboard: [
-			[{ text: 'Допомога', callback_data: 'help' }],
-			[{ text: 'Сайт', url: 'https://fluxie.pp.ua' }]
-		]
-	};
-
-	return sendMessage(chatId, 'Привіт! Виберіть опцію:', env, keyboard);
-}
-
-async function sendHelpMessage(chatId, env) {
-	return sendMessage(chatId, 'Це бот Флюксі. Він open-source! Сайт: https://fluxie.pp.ua', env);
-}
-
-async function sendMessage(chatId, text, env, replyMarkup = null) {
-	const body = {
-		chat_id: chatId,
-		text: text,
-		parse_mode: 'Markdown',
-		...(replyMarkup && { reply_markup: replyMarkup })
-	};
-
-	return fetch(`https://api.telegram.org/bot${env.BOT_TOKEN}/sendMessage`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(body)
-	});
 }
