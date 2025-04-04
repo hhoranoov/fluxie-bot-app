@@ -27,3 +27,12 @@ export async function answerCallbackQuery(callbackId, env) {
     body: JSON.stringify(body)
   }).catch(error => console.error('Error answering callback query:', error));
 }
+
+// Функція для відображення дії
+export async function sendChatAction(chatId, action, env) {
+  return fetch(`https://api.telegram.org/bot${env.BOT_TOKEN}/sendChatAction`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ chat_id: chatId, action })
+  });
+}

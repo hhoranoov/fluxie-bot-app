@@ -7,7 +7,7 @@
 		"deploy": "wrangler deploy",
 		"dev": "wrangler dev",
 		"webhook": "node src/webhook.js",
-		"database": ""
+		"database": "wrangler d1 execute fluxie-bot-app-db --file=database.sql --remote"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "^0.7.5",
